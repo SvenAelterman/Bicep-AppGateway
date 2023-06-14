@@ -1,0 +1,107 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment": {
+            "value": "demo"
+        },
+        "workloadName": {
+            "value": "appGw"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "tags": {
+            "value": {
+                "lifetime": "short"
+            }
+        },
+        "sequence": {
+            "value": 3
+        },
+        "namingConvention": {
+            "value": "{rtype}-{wloadname}-{env}-{loc}-{seq}"
+        },
+        "kvRgName": {
+            // The name of the resource group of the Key Vault
+            "value": "kv-demo-rg-eastus-01"
+        },
+        "kvName": {
+            // The name of the Key Vault containing the TLS certificates
+            "value": "kv-demo-kv-eastus-01"
+        },
+        "appGwSnId": {
+            // The full resource ID of the App Gateway's subnet
+            // = <virtual-network-resource-id>/subnets/<subnet-name>
+            "value": "/subscriptions/68ec4f79-589c-4b65-9916-5fe7f5d385c2/resourceGroups/networking-demo-rg-eastus-01/providers/Microsoft.Network/virtualNetworks/network-demo-vnet-eastus-01/subnets/appgw-subnet"
+        },
+        "appGwSslCertificates": {
+            "value": [
+                {
+                    // The name of the certificate in the App Gateway (to be created)
+                    "name": "wild-aelterman-info",
+                    // The TLS certificate's secret (not certificate) URI ID from Key Vault. Exclude the version ID
+                    "kvSecretId": "https://kv-demo-kv-eastus-01.vault.azure.net/secrets/wild-aelterman-info"
+                },
+                {
+                    "name": "wild-aelterman-info2",
+                    "kvSecretId": "https://kv-demo-kv-eastus-01.vault.azure.net/secrets/wild-aelterman-info2"
+                }
+            ]
+        },
+        "appGwListeners": {
+            "value": [
+                // Create an object for each listener - listeners can have a maximum of 5 host names
+                {
+                    // Each listener name must be unique
+                    "name": "SomeSite",
+                    // List up to 5 host names, create an additional listener to the same backend for more host names
+                    "hostNames": [
+                        "aelterman.info",
+                        "www.aelterman.info"
+                    ],
+                    // Match the name of a certificate in the sslCertificates parameter
+                    "appGwSslCertificateName": "wild-aelterman-info",
+                    // Match the name of a backend below
+                    "backendName": "SomeAppService"
+                },
+                {
+                    "name": "SomeRelatedSite",
+                    "hostNames": [
+                        "ltr.mn",
+                        "www.ltr.mn"
+                    ],
+                    "appGwSslCertificateName": "wild-aelterman-info",
+                    "backendName": "SomeAppService"
+                },
+                {
+                    "name": "AnotherSite",
+                    "hostNames": [
+                        "aelterman.cloud",
+                        "www.aelterman.cloud"
+                    ],
+                    "appGwSslCertificateName": "wild-aelterman-info2",
+                    "backendName": "AnotherAppService"
+                }
+            ]
+        },
+        "appGwBackends": {
+            "value": [
+                // Create an object for each backend App Service
+                {
+                    // The name of the app. Doesn't have to reference anything existing. Will be used as a partial name for App GW resources
+                    "name": "SomeAppService",
+                    // If the home page (/) doesn't respond with an HTTP 200-399 response without authentication, etc., provide the path to a health status page
+                    "customProbePath": "",
+                    // The backend address (the URL of the App Service)
+                    "backendAddress": "someApp-demo-app-eastus-01.azurewebsites.net"
+                },
+                {
+                    "name": "AnotherAppService",
+                    "customProbePath": "",
+                    "backendAddress": "someApp2-demo-app-eastus-01.azurewebsites.net"
+                }
+            ]
+        }
+    }
+}

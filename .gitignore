@@ -1,0 +1,7 @@
+# Exclude all deployment-specific PowerShell, but keep the sample file
+*.user-*.ps1
+!/deploy.user-sample.ps1
+
+# Exclude all deployment-specific parameters files, but keep the sample
+main.parameters-*.jsonc
+!/main.parameters-sample.jsonc
