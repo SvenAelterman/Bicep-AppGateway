@@ -41,9 +41,9 @@ param deploymentTime string = utcNow()
 // Variables
 var sequenceFormatted = format('{0:00}', sequence)
 
-var deploymentNameStructure = replace('${workloadName}-${environment}-{rtype}-${deploymentTime}', '-', '')
+var deploymentNameStructure = replace('${workloadName}-${environment}-{rtype}-${deploymentTime}', '--', '-')
 // Naming structure only needs the resource type ({rtype}) replaced
-var namingStructure = replace(replace(replace(replace(replace(namingConvention, '{env}', environment), '{loc}', location), '{seq}', sequenceFormatted), '{wloadname}', workloadName), '-', '')
+var namingStructure = replace(replace(replace(replace(replace(namingConvention, '{env}', environment), '{loc}', location), '{seq}', sequenceFormatted), '{wloadname}', workloadName), '--', '-')
 
 var networkingRgName = split(appGwSnId, '/')[4]
 
